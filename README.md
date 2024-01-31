@@ -7,7 +7,7 @@ All my work to reach the final product can be found in the _Essay_ folder above,
 - The _data_ folder contains the relevant data for the topic of interest.
 - The _code_ folder contains all the code that was sourced in the final essay. The majority of these scripts were sourced in the essay.
 
-I encourage the reader to read through the _ReadMe.rmd_ file in the _Essay_ folder, as it contains additional information about why certain data wrangling processes was completed.
+I encourage the reader to read through the _ReadMe.rmd_ file in the _Essay_ folder, as it contains additional information about why certain data wrangling processes were completed.
 
 Next, I will be providing a run-through of each section of the paper and what I did to the data.
 # Introduction
