@@ -1,0 +1,195 @@
+---
+title: "ReadMe"
+author: "Tashen Naidoo"
+date: "2024-01-28"
+output: html_document
+---
+# Packages 
+```{r}
+pacman::p_load("tidyr", "tbl2xts", "PerformanceAnalytics", "ggplot2", "fmxdat", "MTS","robustbase", "rugarch", "rmgarch", "tidyverse", "xtable")
+```
+
+# Data
+```{r}
+LCL_Stock_Returns <- readRDS("C:/Users/tashe/Desktop/Fin-MetricEssay-20772998/Essay/data/LCL_Stock_Returns.rds")
+```
+Now that the data has been loaded, it is clear that the daily data is provided from 2006-2023. Daily data is appropriate for MV-GARCH models.
+The _Returns_ variable indicates the change in the price of an asset on a daily basis - so it indicates a change in an asset over time. I assume that the closing price is used for each day and that the values provided have been calculated using the simple return process. Therefore, this variable is of great importance. 
+
+## Period
+Due to the MTS package requiring a substantial amount of computational power to run through the data set, the data will need to be restricted from 2013-2023. This is done because I tried running the BEKK11 function through the entire data set period and this process took long and I never saw the outcome. 
+```{r}
+Return <- LCL_Stock_Returns %>% 
+    filter(date > "2012-12-31" & date < "2023-12-31")
+```
+
+## NA's
+Let's check if there are any missing values in the data set.
+```{r}
+library(lubridate)
+Return_missing <- Return %>% 
+    filter(is.na(Return)) %>% 
+    select(date, Tickers) %>% 
+    mutate(Year = lubridate::year(date)) %>% 
+    group_by(Tickers) %>% 
+    mutate(Years_Present = n_distinct(Year))
+```
+The output from the above lines of code indicate the years that the missing stock values are present in the data set. As stocks list and de-list, it seems reasonable to assume that the same stock might leave and enter again. Let's take a look at the total number of missing values for each of the unique Years that the data is missing.
+```{r}
+Return_missing %>% 
+    group_by(Years_Present) %>% 
+    summarise(Total = n())
+```
+There is a maximum of 5 years that the data is missing and the total amount of missing values for each stock is mainly spread between 2-5 years that they aren't present. With all of the above information about the missing NA's, it is safe to take it out from the data set. Also, the economic climate might cause firms to not be present for more than 10 years (the period of the data set), which is common in South Africa.
+
+```{r}
+Return %>% 
+    filter(is.na(Return))
+```
+There are 87 154 missing values in the _Return_ variable. Let's remove this from the data set and combine the *Property* and *Financials* sectors as *Financials*.
+
+```{r}
+Return_filtered <- Return %>%
+    filter(!is.na(Return)) %>%
+    mutate(Superindustryname_Pty = ifelse(Superindustryname_Pty == "Property",
+                                          "Financials", Superindustryname_Pty))
+```
+The _Return_ data has been filtered out for any NA's. 
+
+## Returns
+Now that the _Return_ variable contains no missing values, these values are the changes in the price of a stock from the closing price of the previous day. However, I want the total daily return for each sector. This is done, because exogenous shocks affect sectors, whether it is specific or common (throughout all sectors), and this can be seen in the change in price. Therefore, I get the daily change in overall price per sector. 
+```{r}
+Daily <-  Return_filtered %>% 
+    group_by(Superindustryname_Pty, date) %>%
+    summarise(dailyreturn = sum(Return)) %>% 
+    ungroup() %>% 
+    arrange(date)
+```
+However, now that the total change for each day is calculated across all equities/stock in each sector, I want to get the total daily change within each sector. This is achieved by adding the returns for each day, as the direction of the movement on each day is important. For example, if one sector increases by 5% on one day and 2% on the next, taking the difference between this will give -3% change in the stock, which is incorrect.
+```{r}
+Daily_diff <- Daily %>% 
+    group_by(Superindustryname_Pty) %>%
+    mutate(diff_dailyreturn = dailyreturn + lag(dailyreturn)) %>%
+    filter(date > dplyr::first(date))
+```
+
+## Graph
+A line graph of the daily returns of each sector should be examined across the period. 
+```{r}
+Daily_diff %>% 
+ggplot()+
+    geom_line(aes(date, diff_dailyreturn))+
+    facet_wrap(~Superindustryname_Pty, scales = "free_y")
+```
+Clearly there are certain days where the daily returns are much much higher than throughout the period. Let's look at the spread of the data.
+```{r}
+Daily_diff %>% 
+    group_by(Superindustryname_Pty) %>% 
+    summary()
+```
+Clearly we need to deal with the extreme outliers for graphical purposes.
+```{r}
+Daily_diff %>% 
+    group_by(Superindustryname_Pty) %>% 
+    summarise(sdev = sd(diff_dailyreturn))
+# The stnadard deviations are high, due to high returns being present.
+Daily_diff %>% 
+    filter(diff_dailyreturn > 7 )
+#There are only 16 values that exceed a daily return value of 7, with a few extreme values. The extreme values are capped purely for graphing purposes. 
+
+Daily_graph <- Daily_diff %>% 
+    mutate(diff_dailyreturn = ifelse( diff_dailyreturn > 12.3 , 13,diff_dailyreturn))
+
+summary(Daily_graph$diff_dailyreturn)
+#As we can see this is a lot better for graphing purposes. 
+```
+This capped data set is now ready for the graph/first figure in the paper. 
+
+#Time Series data
+Now that the daily returns have been graphed, I want to get the difference in the change of the returns.This is due to the 
+
+```{r}
+Daily_xts <- Daily_diff %>% 
+    tbl_xts(., cols_to_xts = "diff_dailyreturn", spread_by = "Superindustryname_Pty")
+```
+With this, I have created the Descriptive data table for both data sets. 
+
+```{r}
+#unrestricted data set
+table.Stats(Daily_xts, ci = 0.95, digits = 4)
+data_table <-  data.frame(
+  Statistics = c("Observations", "NAs", "Minimum", "Quartile 1", "Median", "Arithmetic Mean", "Geometric Mean", "Quartile 3", "Maximum", "SE Mean", "LCL Mean (0.95)", "UCL Mean (0.95)", "Variance", "Stdev", "Skewness", "Kurtosis"),
+  Financials = c(2684.0000, 0.0000, -11.0378, -0.3308, 0.1153, 0.3248, NaN, 0.5867, 238.1586, 0.1272, 0.0753, 0.5743, 43.4420, 6.5911, 34.9785, 1258.7429),
+  Industrials = c(2684.0000, 0.0000, -8.6055, -0.4882, 0.1268, 3.2550, NaN, 0.7556, 4186.9339, 2.2057, -1.0701, 7.5801, 13058.3508, 114.2731, 36.5862, 1336.7014),
+  Resources = c(2684.0000, 0.0000, -4.9322, -0.3337, 0.0486, 0.0993, NaN, 0.4686, 24.9681, 0.0204, 0.0594, 0.1392, 1.1130, 1.0550, 10.8691, 239.4805)
+)
+
+
+#Restricted data set graph
+Daily_g_xts <- Daily_graph %>% 
+    tbl_xts(., cols_to_xts = "diff_dailyreturn", spread_by = "Superindustryname_Pty")
+table.Stats(Daily_g_xts, ci = 0.95, digits = 4)
+
+data_table_res <- data.frame(
+  Statistics = c("Observations", "NAs", "Minimum", "Quartile 1", "Median", "Arithmetic Mean", "Geometric Mean", "Quartile 3", "Maximum", "SE Mean", "LCL Mean (0.95)", "UCL Mean (0.95)", "Variance", "Stdev", "Skewness", "Kurtosis"),
+  Financials = c(2684.0000, 0.0000, -11.0378, -0.3308, 0.1153, 0.1571, NaN, 0.5867, 13.0000, 0.0229, 0.1122, 0.2021, 1.4110, 1.1879, 1.5593, 27.5841),
+  Industrials = c(2684.0000, 0.0000, -8.6055, -0.4882, 0.1268, 0.1448, NaN, 0.7556, 13.0000, 0.0243, 0.0972, 0.1924, 1.5821, 1.2578, 0.8043, 14.8721),
+  Resources = c(2684.0000, 0.0000, -4.9322, -0.3337, 0.0486, 0.0904, NaN, 0.4686, 13.0000, 0.0170, 0.0571, 0.1238, 0.7781, 0.8821, 4.3684, 60.7725)
+)
+
+```
+The MarchTest needs to be tested for GARCH purposes. 
+
+```{r}
+MarchTest(Daily_xts)
+MT1 <- data.frame(
+  Test = c("Q(m) of squared series (LM test)", "Rank-based Test", "Q_k(m) of squared series", "Robust Test (5%)"),
+  Test_Statistic = c(668.4792, 384.3199, 2007.779, 1425.223),
+  P_Value = c(0, 0, 0, 0)
+)
+
+
+MarchTest(Daily_g_xts)
+MT2 <- data.frame(
+  Test = c("Q(m) of squared series (LM test)", "Rank-based Test", "Q_k(m) of squared series", "Robust Test (5%)"),
+  Test_Statistic = c(792.96, 1627.927, 3021.882, 1346.978),
+  P_Value = c(0, 0, 0, 0)
+)
+
+#Please note that the code below takes a long time to process. Uncomment to run
+# BEKK <- BEKK11(Daily_xts)
+# BEKK_g <- BEKK11(Daily_g_xts)
+```
+
+Now I need to put these values into a table. I will need to make a table for each data set. The final version of the tables for the final document can be found in the _code_ folder. 
+
+```{r}
+library(xtable)
+#Unrestrcited data set
+data_unres <- data.frame(
+  Coefficient = c("mu1.Financials", "mu2.Industrials", "mu3.Resources", "A011", "A021", "A031", "A022", "A032", "A033", "A11", "A21", "A31", "A12", "A22", "A32", "A13", "A23", "A33", "B11", "B21", "B31", "B12", "B22", "B32", "B13", "B23", "B33"),
+  Estimate = c(3.24813e-01, 3.25496e+00, 9.93204e-02, 6.59105e+00, -5.11933e-02, 6.89667e-02, 1.14273e+02, -2.75462e-02, 1.05235e+00, 1.00000e-01, 2.00000e-02, 2.00000e-02, 2.00000e-02, 1.00000e-01, 2.00000e-02, 2.00000e-02, 2.00000e-02, 1.00000e-01, 8.00000e-01,  2.00000e-02, 2.00000e-02, 2.00000e-02, 8.00000e-01, 2.00000e-02, 2.00000e-02, 2.00000e-02, 8.00000e-01),
+  Std.Error = c(3.30263e-01, 3.01693e+00, 2.59016e-01, NaN, 2.21593e+00, 1.21657e-01, NaN, 7.42034e-02, 9.83421e-02, 1.02537e-02, 8.36321e-02, 6.99044e-03, 5.23346e-03, 8.91243e-03, 3.90496e-03, 1.79507e-01, 1.62094e+00, 1.94892e-01, 1.16132e-02, 1.31152e-01, 1.04281e-02, 3.88147e-04, 6.57937e-03, NaN, 1.61334e-02, 1.54297e-01, 9.59059e-03),
+  t.value = c(0.98350, 1.07890, 0.38345, NaN, -0.02310, 0.56690, NaN, -0.37123, 10.70094, 9.75262, 0.23914, 2.86105, 3.82156, 11.22029, 5.12169, 0.11142, 0.01234, 0.51310, 68.88690, 0.15249, 1.91789, 51.52692, 121.59225, NaN, 1.23966, 0.12962, 83.41514),
+  Pr = c(0.32536315, 0.28063270, 0.70138429, NaN, 0.98156858, 0.57078451, NaN, 0.71046912, 2.22e-16, 2.22e-16, 0.81099501, 0.00422241, 0.00013261, 2.22e-16, 3.0281e-07, 0.91128638, 0.99015553, 0.60787898, 2.22e-16, 0.87879699, 0.05512446, 2.22e-16, 2.22e-16, NaN, 0.21510030, 0.89686714, 2.22e-16)
+)
+
+table3 <- xtable(data_unres, caption = "BEKK11 Model", label = "tab:bekk11")
+
+#restricted data set
+data_res <- data.frame(
+  Coefficient = c("mu1.Financials", "mu2.Industrials", "mu3.Resources","A011", "A021", "A031", "A022", "A032", "A033","A11", "A21", "A31", "A12", "A22", "A32", "A13","A23", "A33", "B11", "B21", "B31", "B12", "B22","B32", "B13", "B23", "B33"),
+  Estimate = c(0.1654361, 0.2168453, 0.0541149, 0.2375742, 0.3536865, 0.2755715, 0.2894287, 0.1737496, 0.5960290, 0.5511244, 0.0143542, 0.0593403, 0.0507062, 0.6101878, 0.0140765, 0.0123661, 0.0488649, 0.5219748, 0.5207865, -0.5000000,     0.0949237, 0.4091874, 0.8472490, -0.0280492, -0.2594094, -0.0910837, 0.0000010),
+  Std.Error = c(0.0155078, 0.0186068, 0.0174110, 0.0296649, 0.0994166,              0.0673874, 0.0973340, 0.1226434, 0.0249960, 0.0338748, 0.0172952, 0.0134533, 0.0165752, 0.0268213, 0.0144553, 0.0173498, 0.0194177, 0.0275745, 0.0231208, 0.0316515, 0.0398178, 0.0201548, 0.0345561, NaN, 0.0288143, 0.0980128, NaN),
+  t.value = c(10.66795, 11.65407, 3.10809, 8.00860, 3.55762, 4.08936,           2.97356, 1.41671, 23.84501, 16.26944, 0.82996, 4.41084, 3.05916, 22.75009, 0.97380, 0.71275, 2.51652, 18.92960, 22.52464, -15.79702, 2.38395, 20.30222, 24.51810, NaN,  -9.00280, -0.92930, NaN),
+  Pr = c(2.22e-16, 2.22e-16, 0.00188300, 1.1102e-15, 0.00037423, 4.3256e-05, 0.00294364, 0.15656910, 2.22e-16, 2.22e-16, 0.40656331, 1.0297e-05, 0.00221959, 2.22e-16, 0.33015808, 0.47599918, 0.01185218, 2.22e-16, 2.22e-16, 2.22e-16,      0.01712790, 2.22e-16, 2.22e-16, NaN, 2.22e-16, 0.35273150, NaN)
+)
+
+table4 <- xtable(data_res, caption = "BEKK11 Model (restricted data)", label = "tab:bekk11")
+
+```
+
+
+
+
+

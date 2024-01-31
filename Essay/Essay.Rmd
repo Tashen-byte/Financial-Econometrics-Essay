@@ -3,7 +3,7 @@
 # Remove comments and add values where applicable.
 # The descriptions below should be self-explanatory
 
-title: "Helping You Write Academic Papers in R using Texevier"
+title: "Understanding volatilty in South Africa: a multivariate GARCH approach"
 #subtitle: "This will appear as Right Header"
 
 documentclass: "elsarticle"
@@ -25,23 +25,23 @@ Thesis_FP: FALSE
 # --------- Front Page
 # Comment: ----- Follow this pattern for up to 5 authors
 AddTitle: TRUE # Use FALSE when submitting to peer reviewed platform. This will remove author names.
-Author1: "Jane Doe^[__Contributions:__  \\newline _The authors would like to thank no institution for money donated to this project. Thank you sincerely._]"  # First Author - note the thanks message displayed as an italic footnote of first page.
-Ref1: "Some Institution, Cape Town, South Africa" # First Author's Affiliation
-Email1: "nfkatzke\\@gmail.com" # First Author's Email address
+Author1: "Tashen Naidoo"  # First Author - note the thanks message displayed as an italic footnote of first page.
+Ref1: "Stellenbosch University, Cape Town, South Africa" # First Author's Affiliation
+Email1: "20772998\\@sun.ac.za" # First Author's Email address
 
-Author2: "John Smith"
-Ref2: "Some other Institution, Cape Town, South Africa"
-Email2: "John\\@gmail.com"
-CommonAffiliation_12: TRUE # If Author 1 and 2 have a common affiliation. Works with _13, _23, etc.
+# Author2: "John Smith"
+# Ref2: "Some other Institution, Cape Town, South Africa"
+# Email2: "John\\@gmail.com"
+# CommonAffiliation_12: TRUE # If Author 1 and 2 have a common affiliation. Works with _13, _23, etc.
+# 
+# Author3: "John Doe"
+# Email3: "Joe\\@gmail.com"
 
-Author3: "John Doe"
-Email3: "Joe\\@gmail.com"
-
-CorrespAuthor_1: TRUE  # If corresponding author is author 3, e.g., use CorrespAuthor_3: TRUE
+# CorrespAuthor_1: TRUE  # If corresponding author is author 3, e.g., use CorrespAuthor_3: TRUE
 
 # Comment out below to remove both. JEL Codes only given if keywords also given.
-keywords: "Multivariate GARCH \\sep Kalman Filter \\sep Copula" # Use \\sep to separate
-JELCodes: "L250 \\sep L100"
+keywords: "Multivariate GARCH, South Africa Volatility, BEKK parametrisation " # Use \\sep to separate
+# JELCodes: "L250 \\sep L100"
 
 # ----- Manage headers and footers:
 #BottomLFooter: $Title$
@@ -91,8 +91,8 @@ output:
     template: Tex/TexDefault.txt
     fig_width: 3.5 # Adjust default figure sizes. This can also be done in the chunks of the text.
     fig_height: 3.5
-abstract: |
-  Abstract to be written here. The abstract should not be too long and should provide the reader with a good understanding what you are writing about. Academic papers are not like novels where you keep the reader in suspense. To be effective in getting others to read your paper, be as open and concise about your findings here as possible. Ideally, upon reading your abstract, the reader should feel he / she must read your paper in entirety.
+# abstract: |
+#   Abstract to be written here. The abstract should not be too long and should provide the reader with a good understanding what you are writing about. Academic papers are not like novels where you keep the reader in suspense. To be effective in getting others to read your paper, be as open and concise about your findings here as possible. Ideally, upon reading your abstract, the reader should feel he / she must read your paper in entirety.
 ---
 
 <!-- First: Set your default preferences for chunk options: -->
@@ -121,84 +121,183 @@ write_rds(Example_data, path = "data/Example_data.rds")
 <!-- # Start Writing here: -->
 <!-- ############################## -->
 
-# Introduction \label{Introduction}
+# Introduction 
 
-References are to be made as follows: @fama1997[p. 33] and @grinold2000 Such authors could also be referenced in brackets [@grinold2000] and together [@fama1997 \& @grinold2000]. Source the reference code from scholar.google.com by clicking on ``cite'' below article name. Then select BibTeX at the bottom of the Cite window, and proceed to copy and paste this code into your ref.bib file, located in the directory's Tex folder. Open this file in Rstudio for ease of management, else open it in your preferred Tex environment. Add and manage your article details here for simplicity - once saved, it will self-adjust in your paper.
+Investors who manage their funds or are responsible for that of others seek stable and profitable returns on the portfolio decisions they make. This requires investors to optimise their portfolio of holdings, which may include a combination of equities, assets, commodities, bonds, etc, and assess whether the risk and reward metrics align with their portfolio return goals and/or benchmarks. Due to expectations from clients and investors on meeting certain performance standards, investors need to instil confidence in their ability to meet these requirements by using the correct measures of risk and return. 
 
-> I suggest renaming the top line after \@article, as done in the template ref.bib file, to something more intuitive for you to remember. Do not change the rest of the code. Also, be mindful of the fact that bib references from google scholar may at times be incorrect. Reference Latex forums for correct bibtex notation.
+There is a plethora of investor risk management calculations (ROE, Sharpe ratio, diversification ratio, etc) that are used by investors to assess the current position of a portfolio and the exact returns gained or lost on individual returns. These calculations are based on price movements being directly affected by shifts in demand factors – which are affected by externalities. Externalities can be common or asset-specific, which may cause spillover to other assets due to correlation. The ability of the investor to capture externalities and incorporate them into the calculations for the portfolio is crucial for the investor to maintain an optimal portfolio. Therefore, utilising models that can sequentially deal with past information is of great importance for forecasting price movements and making better portfolio decisions. 
 
-To reference a section, you have to set a label using ``\\label'' in R, and then reference it in-text as e.g. referencing a later section, Section \ref{Meth}.
+The listed price of firms is affected by their reported performances, intended plans, overall well-being, and their ability to deal with exogenous shocks. As firms perform and react independently, to gain a good understanding of overall market movement, isolating key economic drivers in nations provides a clearer understanding of overall market contributors. This entails taking a broader approach by evaluating the key economic sectors and their price movement over time, instead of focusing on individual firms. Sectors may be unique in their production process, but common shocks pose a threat to all sectors (and their ability to deal with them). Key sectors may be more vulnerable than others, and it is important to understand if sectors that can deal with common shocks are exposed to the vulnerability of others. Furthermore, it is interesting to identify if unique shocks to a specific sector affect it in any way, and if it is transmitted to another.  This valuable insight allows an investor to make better decisions with their portfolio composition, however, appropriate models have to be used to identify volatility and the spillover effects.
 
-Writing in Rmarkdown is surprizingly easy - see [this website](https://www.rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf) cheatsheet for a summary on writing Rmd writing tips.
+This paper investigates the effect of exogenous shocks over the past decade in South Africa for listed equities. As more than one sector is included, the multivariate generalised autoregressive conditional heteroskedasticity model (MV-GARCH) will be used to assess volatility and whether it is transmitted across sectors. The first section provides a breakdown of the South African economic climate and the importance of understanding why volatility modelling is helpful for portfolio management. Section two covers the theory behind the MV-GARCH model and the existing literature of findings from the models used in volatility assessment.  Section three provides a summary of the data set used in the paper, along with a sector breakdown. Section four delivers a discussion about the empirical results from the model and lastly, the paper closes off with the conclusion.
 
-# Data  {-}
+# South Africa Outline 
 
-Notice how I used the curly brackets and dash to remove the numbering of the data section.
+South Africa is a nation that is endowed with an abundance of sought after commodities, however, it still remains its statues as a developing nation (@RePEc:pra:mprapa:80763). The World Bank has developed _The Global Investment Competitiveness Report_ which highlights key factors that influence investor confidence (@world2020global). The report indicates that investor confidence is dependent on political stability and the macroeconomic environment, both of which are sensitive topics in South Africa. The frequent reports of corruption, recurrent cabinet shuffles and continuous political scuffles, create a hostile and unattractive political environment in South Africa. The macroeconomic environment consists of stagnant growth, socio-economic despair, extreme unemployment and many more issues. 
 
-Discussion of data should be thorough with a table of statistics and ideally a figure.
+The energy crisis, locally known as “load-shedding”, is currently the biggest challenge for the South African government to overcome, as this is a decisive input used in the productivity of firms and is also directly used by consumers. This current issue has caused severe issues for growth and development and has severely impaired several firms in their daily activities. Furthermore, another state-owned asset, Transnet, has suffered major logistical issues, creating bottlenecks for supply chains, firms and consumers. This, in addition to the energy crisis, has created an unfavourable outlook on productivity growth. Both issues have been raised by the International Monetary Fund (IMF) as key hurdles to overcome, due to key economic drivers being directly affected [IMF](https://www.imf.org/en/News/Articles/2023/03/21/mcs032223-south-africa-2023-article-iv-mission). However, despite these tough economic conditions, certain sectors of the economy have been resilient. 
 
-In your tempalte folder, you will find a Data and a Code folder. In order to keep your data files neat, store all of them in your Data folder. Also, I strongly suggest keeping this Rmd file for writing and executing commands, not writing out long pieces of data-wrangling. In the example below, I simply create a ggplot template for scatter plot consistency. I suggest keeping all your data in a data folder.
+Key drivers of the South African economy have managed to adapt to these conditions and provide positive returns in their respective sectors. This means that regardless of economic hardship, investors are still able to identify sectors that can deal with shocks and hold these equities, which aligns with the ideology of diversification. Therefore, it is important to investigate the sectors that are key economic drivers in South Africa and if exogenous shocks to one or more sector/s are transmitted to another. This is valuable information for investors who are holding local equities.  
 
-<!-- The following is a code chunk. It must have its own unique name (after the r), or no name. After the comma follows commands for R which are self-explanatory. By default, the code and messages will not be printed in your pdf, just the output: -->
+# Literature Review 
 
-```{r Figure1,  warning =  FALSE, fig.align = 'center', fig.cap = "Caption Here \\label{Figure1}", fig.ext = 'png', fig.height = 3, fig.width = 6}
+A great body of literature exists surrounding volatility modelling in the financial sector. Several models have been developed in the past and expanded upon by researchers who try to elaborate on the accuracy and applicability of certain models. Identifying the response within and between sectors has been studied by researchers, who have found valuable information in their methodologies and empirical results. 
 
-  # This is just a random plot to show you a plot. This is done if the getwd() does not point to your Template's directory.
-  # Set WD below to your project's working directory.
+Classical econometrics makes use of ordinary least squares (OLS) regression to identify the impact of each variable on one another, by interpreting the coefficients, but its applicability to time series data is limited. Isolating sectors and using OLS can provide coefficients that represent sector impact on each other. The expected mean and variance are calculated using past information and serve as a long-term indicator of price movement, but it overlooks periods of high equity price movements that occur in both directions. The variance is of great interest to investors, as this is the expected deviation away from the price of an equity and this serves as a proxy for risk to the investor. However, a vast body of literature exists for the improvement of modelling risk/variance. 
 
-  g <-
-  ggplot(data = mtcars) +
-  geom_point(aes(x = disp, y = hp, color = cyl)) +
-  theme_bw() +
-  # theme(legend.position = "none") +
-  theme(plot.title = element_text(size = 10)) +
-  theme(axis.title = element_text(size = 10),
-        axis.title.x = element_text()) +
-  labs(y = "y-axis", x = "x-axis", title = "Some amazing plot")
+Whilst homoskedasticity is sought after in many models, Engle’s 1982 _Autoregressive Conditional Heteroscedasticity with Estimates of the Variance of United Kingdom Inflation_ paper is one of the most influential papers in the world of finance, as it focuses on modelling heteroskedasticity with the use of autoregressive conditional heteroskedastic (ARCH) models. He argued that variance is heteroskedastic, as new information affects the price, which is taken into consideration by the ARCH model, as opposed to other models that ensure variance is homoskedastic (constant) throughout the estimation process. Engle argued that homoskedasticity should not be used as a proxy of current risk, as price movement is dependent on the current economic climate and/or news. Therefore, the current price movements may be beyond the long-term standard deviation due to the processing of information. Thus, Engle strongly suggested that the ARCH model be used, as the variance is conditional on the recent past and carries a bigger weight in the variance estimate (@EngleRobertF.1982ACHw). 
 
-g
+Furthermore, the paper is expansive in the mathematics behind the model and how the ARCH model provides better coefficients compared to the OLS regression, as the constant variance in a normal regression is not able to utilise an exogenous variable to explain changes that occur in the variance. This data-generating process of the ARCH model can provide more precise estimates of price. An important contribution from Engle is the use of the ARCH model to capture, predict and minimise periods of volatility. Engle mentions that periods of ‘volatility clustering’, defined by some exogenous factor causing variance measures to be outliers, are captured more precisely because the model is aimed at modelling variance. The ability of the ARCH model to incorporate Bayesian updating makes it highly valuable for investors to model risk and applies to understanding volatility dynamics (@EngleRobertF.1982ACHw).  
+
+Tim Bollerslev developed _Generalized Autoregressive Conditional Heteroskedasticity_ in 1986 which expanded on Engle’s work by incorporating a more flexible lag structure. He proves this by looking at inflation volatility and its correlation to certain macroeconomic factors – this is tested across the various models for comparative purposes. The GARCH model provides an adaptive learning mechanism with coefficients that are more accurate and robust, as indicated by his empirical results @BollerslevTim2023RoGA.
+Engle has produced an updated paper about the application of ARCH and GARCH models in econometrics . This paper contains less literature on the mathematics behind the models and focuses on emphasising their superiority compared to normal regressions – especially for variance calculations. The variance interpretation is enhanced, as the ARCH approach makes use of more recent variance movements and their influence on price. This leap in improvement provides a variance indicator that is more representative of the current economic climate. Engle mentions how Bollerslev’s GARCH approach is an improvement on his model, with it being more parsimonious, as it provides a better-weighted distribution for the past variance influence on the calculated variance estimate. The paper includes how these models are flexible to incorporate news and measure the source and extent of volatility, which is useful to investors for understanding the position of a portfolio (@EngleRobert2001G1TU). Burns et al. (1998) and Hassan & Malik (2007) expand upon this. 
+
+Burns et al. (1998) speak about asynchronous price data across different markets and time zones. This is a real-world issue with managers holding local and global equities with different price updating times. This affects the portfolio’s hedging strategy, and value at risk estimates and could lead to more errors. Due to trading markets closing and opening at different times, this model approach aims to offer investors information to maintain optimal positions in the market targeted towards their portfolio goals by calculating an expected price at any time. The MV-GARCH approach is used across the different trading markets globally, and the authors emphasise the importance of correlations and how the model aids portfolio rebalancing based on predicted prices when markets are closed (@BurnsPatrick1998CaVo). 
+
+Hassan & Malik (2007) use an MV-GARCH model to identify if there is a volatility transmission between sectors in the United States over time. This literature is important for understanding local exogenous shocks to sectors, and whether the volatility is transmitted to any other sector (@HassanSyedAun2007MGmo). Their methodologies are used as a guideline for this paper, as the MV-GARCH model is extremely useful in capturing volatility, responsiveness and persistence of each sector in South Africa for the data set.
+
+# Data 
+
+The data set contains daily closed returns from 1 January 2013 to 12 December 2023 for the financial, industrial and resource sectors of South Africa. These results are important for investors to understand the movement of industries over time and the volatility present in each. The price movement for each sector can be viewed in Figure 4.1. Figure 4.1 has been formulated by taking the cumulative daily returns of all the equities in each sector throughout the specified period. There were a few extreme outliers in the data that have been restricted for graphical purposes – Figure 4.2 shows the unrestricted data. Figure 1 clearly shows periods of volatility clustering, as high price movements are grouped. This aligns with Engle’s view on variance movement being conditional on current news - hence autocorrelation is present.
+
+```{r Figure1,  warning =  FALSE, fig.align = 'center', fig.cap = "Cumulative Sector Returns (restricted data set) \\label{Figure1}", fig.ext = 'png', fig.height = 5, fig.width = 6}
+
+pacman::p_load("tidyr", "tbl2xts", "PerformanceAnalytics", "ggplot2", "fmxdat", "MTS","robustbase", "rugarch", "rmgarch", "tidyverse", "xtable")
+LCL_Stock_Returns <- readRDS("data/LCL_Stock_Returns.rds")
+Return <- LCL_Stock_Returns %>% 
+    filter(date > "2012-12-31" & date < "2023-12-31")
+
+library(lubridate)
+Return_missing <- Return %>% 
+    filter(is.na(Return)) %>% 
+    select(date, Tickers) %>% 
+    mutate(Year = lubridate::year(date)) %>% 
+    group_by(Tickers) %>% 
+    mutate(Years_Present = n_distinct(Year))
+
+Return_filtered <- Return %>%
+    filter(!is.na(Return)) %>%
+    mutate(Superindustryname_Pty = ifelse(Superindustryname_Pty == "Property",
+                                          "Financials", Superindustryname_Pty))
+
+Daily <-  Return_filtered %>% 
+    group_by(Superindustryname_Pty, date) %>%
+    summarise(dailyreturn = sum(Return)) %>% 
+    ungroup() %>% 
+    arrange(date)
+
+Daily_diff <- Daily %>% 
+    group_by(Superindustryname_Pty) %>%
+    mutate(diff_dailyreturn = dailyreturn + lag(dailyreturn)) %>%
+    filter(date > dplyr::first(date))
+
+Daily_graph <- Daily_diff %>% 
+    mutate(diff_dailyreturn = ifelse( diff_dailyreturn > 12.3 , 13,diff_dailyreturn))
+
+source("code/Graph.R")
+fmxdat::finplot(graph, x.vert = T, x.date.type = "%Y", x.date.dist = "1 years")
 
 ```
 
-To make your graphs look extra nice in latex world, you could use Tikz device. Replace dev - 'png' with 'tikz' in the chunk below. Notice this makes the build time longer and produces extra tex files - so if you are comfortable with this, set your device to Tikz and try it out:
+```{r Figure2, warning =  FALSE, fig.align = 'center', fig.cap = "Cumulative Sector Returns (unrestricted data set) \\label{Figure2}", fig.height = 5, fig.width = 6, dev = 'png'}
 
-```{r Figure2, warning =  FALSE, fig.align = 'center', fig.cap = "Caption Here \\label{Figure2}", fig.height = 3, fig.width = 6, dev = 'png'}
-
-ExampleData <- read_rds( "data/Example_data.rds")
-
-source("code/Example_Plot_Scatter.R") # Load a function from your 'code' folder. This e.g. plots scatters to your own preferences.
-source( "code/Data_Create.R") #
-
-ExampleData <- Data_Create(N = 100) # Same as the ExampleData loaded above - this is just a function to create the stored data.
-
-g <- Example_Plot_Scatter(DataInput = ExampleData,
-                          X = "Height_Score",
-                          Y = "Weight_Score",
-                          Z = "Agility_Score",
-                          Theme = theme_bw(), # run ?ggthemes for other themes.
-                          Title = "", # I prefer to use the caption set above.
-                          Ylab = "Height",
-                          Xlab = "Lenght",
-                          LegendTitle = "Agility",
-                          TitleSize = 10,
-                          LabSize = 10)
-
-g
-
-# Although the functions above are really simple, the principle is simple: containing calculations and data wrangling in their own functions will make this template much cleaner and more manageable.
-# When you start working, delete these meaningless functions and replace with your own...
+source("code/Graph_unres.R")
+fmxdat::finplot(graph_unres, x.vert = T, x.date.type = "%Y", x.date.dist = "1 years")
 
 ```
 
-To reference the plot above, add a ``\\label'' after the caption in the chunk heading, as done above. Then reference the plot as such: As can be seen, Figures \ref{Figure1}  and \ref{Figure2} are excellent, with Figure \ref{Figure2} being particularly aesthetically pleasing due to its device setting of Tikz. The nice thing now is that it correctly numbers all your figures (and sections or tables) and will update if it moves. The links are also dynamic.
+Table 4.1 provides the descriptive statistics for each of the sector returns – this is done on the unrestricted data. The high kurtosis levels indicate that the returns are leptokurtic. However, looking at the descriptive data in Table 4.2, the results are more representative of the price movements. 
 
-I very strongly suggest using ggplot2 (ideally in combination with dplyr) using the ggtheme package to change the themes of your figures.
+```{r ShortTable, results = 'asis'}
+library(xtable)
+data_table <-  data.frame(
+  Statistics = c("Observations", "NAs", "Minimum", "Quartile 1", "Median", "Arithmetic Mean", "Geometric Mean", "Quartile 3", "Maximum", "SE Mean", "LCL Mean (0.95)", "UCL Mean (0.95)", "Variance", "Stdev", "Skewness", "Kurtosis"),
+  Financials = c(2684.0000, 0.0000, -11.0378, -0.3308, 0.1153, 0.3248, NaN, 0.5867, 238.1586, 0.1272, 0.0753, 0.5743, 43.4420, 6.5911, 34.9785, 1258.7429),
+  Industrials = c(2684.0000, 0.0000, -8.6055, -0.4882, 0.1268, 3.2550, NaN, 0.7556, 4186.9339, 2.2057, -1.0701, 7.5801, 13058.3508, 114.2731, 36.5862, 1336.7014),
+  Resources = c(2684.0000, 0.0000, -4.9322, -0.3337, 0.0486, 0.0993, NaN, 0.4686, 24.9681, 0.0204, 0.0594, 0.1392, 1.1130, 1.0550, 10.8691, 239.4805)
+)
 
-Also note the information that I have placed above the chunks in the code chunks for the figures. You can edit any of these easily - visit the Rmarkdown webpage for more information.
+source("code/Desciptive_unres.R")
+print(table1)
+```
 
-# Splitting a page
+```{r ShortTable2, results = 'asis'}
+library(xtable)
+data_table_res <- data.frame(
+  Statistics = c("Observations", "NAs", "Minimum", "Quartile 1", "Median", "Arithmetic Mean", "Geometric Mean", "Quartile 3", "Maximum", "SE Mean", "LCL Mean (0.95)", "UCL Mean (0.95)", "Variance", "Stdev", "Skewness", "Kurtosis"),
+  Financials = c(2684.0000, 0.0000, -11.0378, -0.3308, 0.1153, 0.1571, NaN, 0.5867, 13.0000, 0.0229, 0.1122, 0.2021, 1.4110, 1.1879, 1.5593, 27.5841),
+  Industrials = c(2684.0000, 0.0000, -8.6055, -0.4882, 0.1268, 0.1448, NaN, 0.7556, 13.0000, 0.0243, 0.0972, 0.1924, 1.5821, 1.2578, 0.8043, 14.8721),
+  Resources = c(2684.0000, 0.0000, -4.9322, -0.3337, 0.0486, 0.0904, NaN, 0.4686, 13.0000, 0.0170, 0.0571, 0.1238, 0.7781, 0.8821, 4.3684, 60.7725)
+)
+source("code/Descriptive_res.R")
+print(table2)
+```
 
-You can also very easily split a page using built-in Pandoc formatting. I comment this out in the code (as this has caused issues building the pdf for some users - which I presume to be a Pandoc issue), but you are welcome to try it out yourself by commenting out the following section in your Rmd file.
+The MarchTest is used to test if there is a need for the MV-GARCH model. The p-values of all the Marchtests indicate that the GARCH model is appropriate to use for the data. There is significant autocorrelation present, which further supports the need for a GARCH model. The MV-GARCH model is most appropriate for identifying how each sector responds to shocks and if other sectors are exposed to this shock. This model will provide valuable information to investors who want to identify the risk of holding stocks that display co-movement during common and/or unique sector shocks, as this information helps with hedging purposes and portfolio diversification. 
+The BEKK (Baba, Engle, Kraft and Kroner) (@HassanSyedAun2007MGmo) test is a type of GARCH model that is used for estimating the conditional variance between each sector. Furthermore, the BEKK model is limited to handling a maximum of three variables at a time, as this means that 24 parameters need to be estimated. This model is a type of GARCH model that Hassan and Malik (2007) use in their paper to identify volatility transmission (@HassanSyedAun2007MGmo).  
+
+# Empirical Results 
+
+Three sectors in South Africa are investigated using the MV-GARCH model with BEKK parameters. These results are presented in Table 5.1 and Table 5.2, with each representing the unrestricted and restricted data sets. The BEKK parametrisation identifies the conditional variance of each sector and the conditional covariance between each sector and can provide some insight into the effect of news through the error/residual term. 
+
+
+```{r LongTable, results= 'asis'}
+data_unres <- data.frame(
+  Coefficient = c("mu1.Financials", "mu2.Industrials", "mu3.Resources", "A011", "A021", "A031", "A022", "A032", "A033", "A11", "A21", "A31", "A12", "A22", "A32", "A13", "A23", "A33", "B11", "B21", "B31", "B12", "B22", "B32", "B13", "B23", "B33"),
+  Estimate = c(3.24813e-01, 3.25496e+00, 9.93204e-02, 6.59105e+00, -5.11933e-02, 6.89667e-02, 1.14273e+02, -2.75462e-02, 1.05235e+00, 1.00000e-01, 2.00000e-02, 2.00000e-02, 2.00000e-02, 1.00000e-01, 2.00000e-02, 2.00000e-02, 2.00000e-02, 1.00000e-01, 8.00000e-01,  2.00000e-02, 2.00000e-02, 2.00000e-02, 8.00000e-01, 2.00000e-02, 2.00000e-02, 2.00000e-02, 8.00000e-01),
+  Std.Error = c(3.30263e-01, 3.01693e+00, 2.59016e-01, NaN, 2.21593e+00, 1.21657e-01, NaN, 7.42034e-02, 9.83421e-02, 1.02537e-02, 8.36321e-02, 6.99044e-03, 5.23346e-03, 8.91243e-03, 3.90496e-03, 1.79507e-01, 1.62094e+00, 1.94892e-01, 1.16132e-02, 1.31152e-01, 1.04281e-02, 3.88147e-04, 6.57937e-03, NaN, 1.61334e-02, 1.54297e-01, 9.59059e-03),
+  t.value = c(0.98350, 1.07890, 0.38345, NaN, -0.02310, 0.56690, NaN, -0.37123, 10.70094, 9.75262, 0.23914, 2.86105, 3.82156, 11.22029, 5.12169, 0.11142, 0.01234, 0.51310, 68.88690, 0.15249, 1.91789, 51.52692, 121.59225, NaN, 1.23966, 0.12962, 83.41514),
+  Pr = c("0.32536315", "0.28063270", "0.70138429", "NaN", "0.98156858", "0.57078451", "NaN", "0.71046912", "2.22e-16***", "2.22e-16***", "0.81099501", "0.00422241**", "0.00013261***", "2.22e-16***", "3.0281e-07***", "0.91128638", "0.99015553", "0.60787898", "2.22e-16***", "0.87879699", "0.05512446", "2.22e-16***", "2.22e-16***", "NaN", "0.21510030", "0.89686714", "2.22e-16***")
+)
+
+table3 <- xtable(data_unres, caption = "BEKK11 Model", label = "tab:bekk11")
+print(table3)
+```
+
+```{r LongTable2, results = 'asis'}
+data_res <- data.frame(
+  Coefficient = c("mu1.Financials", "mu2.Industrials", "mu3.Resources","A011", "A021", "A031", "A022", "A032", "A033","A11", "A21", "A31", "A12", "A22", "A32", "A13","A23", "A33", "B11", "B21", "B31", "B12", "B22","B32", "B13", "B23", "B33"),
+  Estimate = c(0.1654361, 0.2168453, 0.0541149, 0.2375742, 0.3536865, 0.2755715, 0.2894287, 0.1737496, 0.5960290, 0.5511244, 0.0143542, 0.0593403, 0.0507062, 0.6101878, 0.0140765, 0.0123661, 0.0488649, 0.5219748, 0.5207865, -0.5000000,     0.0949237, 0.4091874, 0.8472490, -0.0280492, -0.2594094, -0.0910837, 0.0000010),
+  Std.Error = c(0.0155078, 0.0186068, 0.0174110, 0.0296649, 0.0994166,              0.0673874, 0.0973340, 0.1226434, 0.0249960, 0.0338748, 0.0172952, 0.0134533, 0.0165752, 0.0268213, 0.0144553, 0.0173498, 0.0194177, 0.0275745, 0.0231208, 0.0316515, 0.0398178, 0.0201548, 0.0345561, NaN, 0.0288143, 0.0980128, NaN),
+  t.value = c(10.66795, 11.65407, 3.10809, 8.00860, 3.55762, 4.08936,           2.97356, 1.41671, 23.84501, 16.26944, 0.82996, 4.41084, 3.05916, 22.75009, 0.97380, 0.71275, 2.51652, 18.92960, 22.52464, -15.79702, 2.38395, 20.30222, 24.51810, NaN,  -9.00280, -0.92930, NaN),
+  Pr = c("2.22e-16***", "2.22e-16***", "0.00188300**", "1.1102e-15***", "0.00037423***", "4.3256e-05***", "0.00294364**", "0.15656910", "2.22e-16***", "2.22e-16***", "0.40656331", "1.0297e-05***", "0.00221959**", "2.22e-16***", "0.33015808", "0.47599918", "0.01185218*", "2.22e-16***", "2.22e-16***", "2.22e-16***", "0.01712790*", "2.22e-16***", "2.22e-16***", "NaN", "2.22e-16***", "0.35273150", "NaN")
+)
+
+table4 <- xtable(data_res, caption = "BEKK11 Model (restricted data)", subcaption = , label = "tab:bekk11")
+print(table4)
+```
+
+> The table can be interpreted as follows:   
+> Significance codes: 0 = *** & 0.001 = ** & 0.05 = *    
+> Financials = 1  
+> Industrials = 2  
+> Resources = 3  
+> _eg: A21 refers to the spillover effects of the Industrial sector on the Financial Sector_
+
+ \newpage
+
+The mean equations represent the expected return from each sector, with the null hypothesis representing a mean return of zero – these estimates are _mu.financials, mu.industrials, mu.resources_ in both tables. Table 5.1 provides statistically insignificant mean returns for each sector, which means that there is not enough evidence to reject the null hypothesis. The restricted data set mean returns, as seen in Table 5.2, are statistically significant for all sectors (p-value < 0.05).
+
+Understanding volatility persistence within each sector provides the investor with an understanding of how long to expect periods of irregular movement. The volatility persistence is estimated using the lagged squared standardised residuals – these estimates are from _A011_ to _A033_ in both tables. This analyses how much of the current volatility is conditional on past movements. The _A011_, _A022_ and _A033_ estimates (Table 5.1) indicate the volatility persistence for each sector, with the industrial sector displaying the highest levels of persistence.  These same estimates from the restricted data set (Table 5.2) are all statistically significant (p-value < 0.05) and positive. Volatility persistence from the industrial and resource sectors remains persistent in the financial sector, as _A021_ and _A031_ are statistically significant (p-value < 0.05). These coefficients provide the investor with an idea of how long volatility will remain in each sector and how much from other sectors will persist.
+
+_A11_ is a matrix coefficient that represents the volatility spillovers between sectors – these estimates are from _A11_ to _A33_ in both tables. It indicates the extent to which the past historical data influences the current covariance between and within each sector. The restricted data (Table 5.1) indicates that only five of the variables are significant (p-value < 0.05), with all estimates being positive. The financial sector is affected by volatility spillover from the resource sector ( _A13_ p-value). The industrial sector is vulnerable to volatility spillover from the financial and resource sectors, with each having an equal impact (equal estimates from _A21_ & _A23_) and the resource sector being more statistically significant. The resource sector is unperturbed by any volatility from the other sectors (p-value > 0.05). The restricted data results (Table 5.2) have six significant variables present and all estimates are positive. The financial sector is vulnerable to volatility spillover from the resource sector, as the p-value is significant ( _A31_). Volatility in the financial sector is transmitted to the industrial sector, indicated by the significant p-value ( _A12_), but the converse is not present. Lastly, the resource sector remains unaffected by volatility movement in the other sectors. The volatility spill-over indicator provides invaluable information to an investor, as holding any financial or industrial sector equity requires constant vigilance of the other sectors, whereas the resource sector is unaffected. This information remains constant for both data sets. 
+
+The B matrix coefficients provide the shock impact of each sector. This is interpreted as the ability of the sector to deal with news from its own and other sectors – these estimates are from _B11_ to _B33_ in both tables. Table 5.1} only contains positive estimates, for the B coefficients, but only four of these estimates are significant at the five per cent level. The financial sector is significantly affected by news from its sector. Furthermore, although the p-value from the resource sector is not significant (p-value = 0.055), it can be substantiated that the resource sector news impacts the financial sector. The industrial sector is influenced by shocks from its sector and the financial sector (p-value < 0.05). Lastly, the shock impact on the resource sector is only affected by news from its sector. Table 5.2 comprises a mix of positive and negative estimates of which six of them are significant at the five percent level. The financial sector is highly influenced by news in its sector and from the other two sectors, as all p-values are significant at the five per cent level. The industrial and resource sector news each respectfully has a positive and negative impact on the financial sector, with the former having a greater effect. The industrial sector is positively impacted by its shocks and shocks from the financial sector, with an unfortunate _NaN_ for the resource impact. The resource sector’s news impact cannot be interpreted, as a _NaN_ is present, but any shock to the financial sector is significant and negatively impacts this sector. These findings are important to investors, as they can better understand the impact that shocks (endogenous and exogenous) have on sectors. 
+
+# Conclusion 
+
+Since the introduction of the GARCH model, there have been several iterations of it, each slightly different, to provide the user with more sensible and robust estimates. The world of finance research and understanding of variance has been greatly improved using heteroskedastic conditional variance modelling. Logically, during economic swings or exogenous and/or endogenous shocks, it makes sense to expect local equity prices to remain in a volatile state (i.e. volatility clustering), this is taken into consideration for the risk/variance estimates. Volatility modelling has been sought after by many researchers, as identifying the closest estimate of deviation compared to the actual change in listed price allows for better portfolio optimisation. The BEKK parametrisation is a version of the MV-GARCH model that breaks down the volatility between three variables of interest and provides a much deeper understanding of volatility persistence, spillover and reaction to shocks.
+
+This paper’s findings indicate that although the South African economy is faced with a multitude of economic issues, the volatility created by this is identified with the use of the MV-GARCH model. The empirical findings are of great use to investors who want to hold local equities from the financial, industrial and resource sectors. The results can illustrate the source of volatility in their sector and how long it will remain (persistence), whether the volatility is carried over to another sector (spillover), and how well each sector can deal with shocks. These findings are invaluable for portfolio optimisation and deliver a better understanding of the resilience of these sectors in the South African climate. 
+
+This research can be expanded upon by including more key economic sectors of South Africa, as this will further help investors with portfolio optimisation, hedging and many more applications. However, this paper can be improved by dealing with the NaNs present in the data, as it will help identify which independent variable estimates are statistically significant (p-value < 0.05). 
+
+
+
+
+
+
+
 
 
 <!-- :::::: {.columns data-latex="[T]"} -->
@@ -226,185 +325,13 @@ You can also very easily split a page using built-in Pandoc formatting. I commen
 
 
 
-#  Methodology \label{Meth}
-
-## Subsection
-Ideally do not overuse subsections. It equates to bad writing.^[This is an example of a footnote by the way. Something that should also not be overused.]
-
-## Math section
-
-Equations should be written as such:
-
-\begin{align}
-\beta = \sum_{i = 1}^{\infty}\frac{\alpha^2}{\sigma_{t-1}^2} \label{eq1} \\
-\int_{x = 1}^{\infty}x_{i} = 1 \notag
-\end{align}
-
-If you would like to see the equations as you type in Rmarkdown, use $ symbols instead (see this for yourself by adjusted the equation):
-
-$$
-\beta = \sum_{i = 1}^{\infty}\frac{\alpha^2}{\sigma_{t-1}^2} \\
-\int_{x = 1}^{\infty}x_{i} = 1
-$$
-
-Note the equation above - this should appear in math in Rstudio. Writing nice math requires practice. Note I used a forward slashes to make a space in the equations. I can also align equations using  __\&__, and set to numbering only the first line. Now I will have to type ``begin equation'' which is a native \LaTeX command. Here follows a more complicated equation that you want aligned (using \& sign) and numbered:
-
-
-\begin{align}
-	y_t &= c + B(L) y_{t-1} + e_t   \label{eq2}    \\ \notag
-	e_t &= H_t^{1/2}  z_t ; \quad z_t \sim  N(0,I_N) \quad \& \quad H_t = D_tR_tD_t \\ \notag
-		D_t^2 &= {\sigma_{1,t}, \dots, \sigma_{N,t}}   \\ \notag
-		\sigma_{i,t}^2 &= \gamma_i+\kappa_{i,t}  v_{i, t-1}^2 +\eta_i  \sigma_{i, t-1}^2, \quad \forall i \\ \notag
-		R_{t, i, j} &= {diag(Q_{t, i, j}}^{-1}) . Q_{t, i, j} . diag(Q_{t, i, j}^{-1})  \\ \notag
-		Q_{t, i, j} &= (1-\alpha-\beta)  \bar{Q} + \alpha  z_t  z_t'  + \beta  Q_{t, i, j} \notag
-\end{align}
-
-Note that in \ref{eq2} I have aligned the equations by the equal signs. I also want only one tag, and I create spaces using ``quads''.
-
-See if you can figure out how to do complex math using the two examples provided in \ref{eq1} and \ref{eq2}.
-
-<!-- $$ -->
-<!-- This is a commented out section in the writing part. -->
-<!-- Comments are created by highlighting text, amnd pressing CTL+C -->
-<!-- \\begin{align} -->
-<!-- \\beta = \\alpha^2 -->
-<!-- \end{align} -->
-<!-- $$ -->
-
-# Results
-
-Tables can be included as follows. Use the _xtable_ (or kable) package for tables. Table placement = H implies Latex tries to place the table Here, and not on a new page (there are, however, very many ways to skin this cat. Luckily there are many forums online!).
-
-
-```{r ShortTable, results = 'asis'}
-
-library(xtable)
-data <- mtcars[1:5,] %>% tibble::as_tibble()
-
-table <- xtable(data, caption = "Short Table Example \\label{tab1}")
-  print.xtable(table,
-             # tabular.environment = "longtable",
-             floating = TRUE,
-             table.placement = 'H',
-             # scalebox = 0.3,
-             comment = FALSE,
-             caption.placement = 'bottom'
-             )
-
-```
-
-To reference calculations __in text__, _do this:_ From table \ref{tab1} we see the average value of mpg is `r mean(mtcars[1:5,]$mpg)`.
-
-Including tables that span across pages, use the following (note that I add below the table: ``continue on the next page''). This is a neat way of splitting your table across a page.
-
-Use the following default settings to build your own possibly long tables. Note that the following will fit on one page if it can, but cleanly spreads over multiple pages:
-
-```{r LongTable, results = 'asis'}
-
-library(xtable)
-
-data = mtcars %>% tibble::as_tibble()
-  addtorow          <- list()
-  addtorow$pos      <- list()
-  addtorow$pos[[1]] <- c(0)
-  addtorow$command  <- c(paste("\\hline \n",
-                               "\\endhead \n",
-                               "\\hline \n",
-                               "{\\footnotesize Continued on next page} \n",
-                               "\\endfoot \n",
-                               "\\endlastfoot \n",sep=""))
-table <- xtable(data, caption = "Long Table Example")
-  print.xtable(table,
-             tabular.environment = "longtable",
-             floating = FALSE, # Leave this as is.
-             table.placement = 'H', # Leave this as is.
-             booktabs = T, # Aesthetics
-             include.rownames = FALSE,  # Typically you don't want this in a table.
-             add.to.row = addtorow, # For adding the Continued on next page part...
-             comment = FALSE,
-             caption.placement = 'top',  # Where do you want the caption?
-             size="\\fontsize{12pt}{13pt}\\selectfont"  # Size of text in table..
-             )
-# See https://cran.r-project.org/web/packages/xtable/vignettes/xtableGallery.pdf for table inspiration
-```
-
-\hfill
-
-<!-- hfill can be used to create a space, like here between text and table. -->
-
-
-## Huxtable
-
-Huxtable is a very nice package for making working with tables between Rmarkdown and Tex easier.
-
-This cost some adjustment to the Tex templates to make it work, but it now works nicely.
-
-See documentation for this package [here](https://hughjonesd.github.io/huxtable/huxtable.html). A particularly nice addition of this package is for making the printing of regression results a joy (see [here](https://hughjonesd.github.io/huxtable/huxtable.html#creating-a-regression-table)). Here follows an example:
-
-
-If you are eager to use huxtable, comment out the Huxtable table in the Rmd template, and uncomment the colortbl package in your Rmd's root.
-
-Note that I do not include this in the ordinary template, as some latex users have complained it breaks when they build their Rmds (especially those using tidytex - I don't have this problem as I have the full Miktex installed on mine). Up to you, but I strongly recommend installing the package manually and using huxtable. To make this work, uncomment the _Adding additional latex packages_ part in yaml at the top of the Rmd file. Then comment out the huxtable example in the template below this line. Reknit, and enjoy.
-
-```{r, results = 'asis'}
-
-if(!require(huxtable)) install.packages(huxtable)
-library(huxtable)
-data(diamonds, package = 'ggplot2')
-Title <- "Regression Output"
-Label <- "Reg01"
-lm1 <- lm(price ~ carat, diamonds)
-lm2 <- lm(price ~ depth, diamonds)
-lm3 <- lm(price ~ carat + depth, diamonds)
-htab <-
-huxreg(lm1, lm2, lm3,
-                statistics = c(N = "nobs", R2 = "r.squared"),
-                note = "%stars%.") %>%
-  set_caption(Title) %>%
-  set_label(Label)
-# More settings:
-font_size(htab) <- 12
-# Let's change regression names: this is slightly hacky, but works. Comment out this section to see what the default looks like:
-  Names <- c( "Reg1", "Reg2", "Reg3")
-  for(i in 1:length(Names)) {
-    htab[1,][[1+i]] <- Names[i]
-  }
-# Now simply call the table:
-htab
-
-```
-
-FYI - R also recently introduced the gt package, which is worthwhile exploring too.
-
-# Lists
-
-To add lists, simply using the following notation
-
-* This is really simple
-
-    + Just note the spaces here - writing in R you have to sometimes be pedantic about spaces...
-
-* Note that Rmarkdown notation removes the pain of defining \LaTeX environments!
-
-# Conclusion
-
-I hope you find this template useful. Remember, stackoverflow is your friend - use it to find answers to questions. Feel free to write me a mail if you have any questions regarding the use of this package. To cite this package, simply type citation("Texevier") in Rstudio to get the citation for @Texevier (Note that uncited references in your bibtex file will not be included in References).
-
-<!-- Make title of bibliography here: -->
-<!-- \newpage -->
 
 \newpage
 
 # References {-}
 
-<div id="refs"></div>
+<div id="ref.bib"></div>
 
 
-# Appendix {-}
 
-## Appendix A {-}
-
-Some appendix information here
-
-## Appendix B {-}
 
